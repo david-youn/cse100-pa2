@@ -6,11 +6,35 @@
 #ifndef DICTIONARY_TRIE_HPP
 #define DICTIONARY_TRIE_HPP
 
+#include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
 
 using namespace std;
+
+// template <char, unsigned int>
+class TSTNode {
+  private:
+    char letter;
+    unsigned int freq;
+
+  public:
+    TSTNode* left;
+    TSTNode* right;
+    TSTNode* middle;
+
+    TSTNode(const char& c) : letter(c) {
+        left = right = middle = nullptr;
+        freq = 0;
+    }
+
+    void setFrequency(unsigned int f) { freq = f; }
+
+    unsigned int getFrequency() { return freq; }
+
+    char getChar() { return letter; }
+};
 
 /**
  * The class for a dictionary ADT, implemented as either
@@ -19,6 +43,8 @@ using namespace std;
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
+    TSTNode* root;
+
   public:
     /* TODO: add function header */
     DictionaryTrie();
