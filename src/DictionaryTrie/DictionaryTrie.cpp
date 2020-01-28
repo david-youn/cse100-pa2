@@ -11,6 +11,7 @@ DictionaryTrie::DictionaryTrie() { root = nullptr; }
 
 /* TODO */
 bool DictionaryTrie::insert(string word, unsigned int freq) {
+    cout << "inserting: " << word << " with freq: " << freq << endl;
     char ltr = word.at(0);
     int pos = 0;
     TSTNode* node = root;
@@ -43,8 +44,8 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
             } else {
                 node->left = new TSTNode(ltr);
                 node = node->left;
-
-                for (int i = 1; i < word.length(); i++) {
+                pos++;
+                for (int i = pos; i < word.length(); i++) {
                     ltr = word.at(i);
                     node->middle = new TSTNode(ltr);
                     node = node->middle;
@@ -60,7 +61,8 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
             } else {
                 node->right = new TSTNode(ltr);
                 node = node->right;
-                for (int i = 1; i < word.length(); i++) {
+                pos++;
+                for (int i = pos; i < word.length(); i++) {
                     ltr = word.at(i);
                     node->middle = new TSTNode(ltr);
                     node = node->middle;
@@ -95,15 +97,18 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
             }
         }
     }
+    cout << "last letter entered be: " << node->getChar() << endl;
     return true;
 }
 
 /* TODO */
 bool DictionaryTrie::find(string word) const {
+    cout << "finding: " << word << endl;
     int pos = 0;
 
     // if TST is empty
     if (root == nullptr) {
+        cout << "root is null" << endl;
         return false;
     }
     if (word.length() == 0) {
@@ -111,33 +116,46 @@ bool DictionaryTrie::find(string word) const {
     }
     TSTNode* node = root;
     char ltr = word.at(0);
-
+    cout << "first letter: " << ltr << endl;
     while (true) {
+        cout << "printing whole word down the middle" << endl;
+
+        TSTNode* tnode = node;
+        cout << tnode->getChar() << endl;
+        while (tnode->middle != nullptr) {
+            tnode = tnode->middle;
+            cout << tnode->getChar() << endl;
+        }
         // left child
         if (ltr < node->getChar()) {
+            cout << "ltr < node->getChar(): " << ltr << "<" << node->getChar()
+                 << endl;
             if (node->left != nullptr) {
                 node = node->left;
             } else {
                 return false;
             }
         }
-
         // right child
         else if (ltr > node->getChar()) {
+            cout << "ltr > node->getChar(): " << ltr << ">" << node->getChar()
+                 << endl;
             if (node->right != nullptr) {
                 node = node->right;
             } else {
                 return false;
             }
         }
-
         // middle child
         else {
+            cout << "ltr = node->getChar(): " << ltr << "=" << node->getChar()
+                 << endl;
             if (pos == word.length() - 1 && node->getFrequency() > 0) {
                 return true;
             } else {
                 if (node->middle != nullptr) {
                     node = node->middle;
+                    cout << "node = node->middle: " << node->getChar() << endl;
                     pos++;
                     if (pos == word.length()) {
                         return false;
@@ -154,6 +172,7 @@ bool DictionaryTrie::find(string word) const {
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
+    std::vector<string> fvector(numCompletions);
     return {};
 }
 

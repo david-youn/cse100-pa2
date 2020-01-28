@@ -62,8 +62,17 @@ TEST(DictTrieTests, FIND_TEST2) {
     ASSERT_TRUE(dict.insert("test", 15));
     ASSERT_TRUE(dict.insert("abc", 2));
     ASSERT_TRUE(dict.find("abc"));
-    ASSERT_FALSE(dict.find("bc"));
+    ASSERT_FALSE(dict.find("yum"));
     ASSERT_TRUE(dict.find("wordo"));
 }
 
+TEST(DictTrieTests, FIND_TEST3) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("yum", 3));
+    ASSERT_TRUE(dict.insert("yummy", 5));
+    ASSERT_TRUE(dict.insert("yorek", 15));
+    ASSERT_TRUE(dict.find("yorek"));
+    ASSERT_TRUE(dict.find("yum"));
+    ASSERT_TRUE(dict.find("yummy"));
+}
 /* TODO */
