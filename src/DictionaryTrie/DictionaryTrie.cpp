@@ -5,13 +5,13 @@
  */
 #include "DictionaryTrie.hpp"
 #include <iostream>
+#include <queue>
 
 /* TODO */
 DictionaryTrie::DictionaryTrie() { root = nullptr; }
 
 /* TODO */
 bool DictionaryTrie::insert(string word, unsigned int freq) {
-    cout << "inserting: " << word << " with freq: " << freq << endl;
     char ltr = word.at(0);
     int pos = 0;
     TSTNode* node = root;
@@ -97,18 +97,15 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
             }
         }
     }
-    cout << "last letter entered be: " << node->getChar() << endl;
     return true;
 }
 
 /* TODO */
 bool DictionaryTrie::find(string word) const {
-    cout << "finding: " << word << endl;
     int pos = 0;
 
     // if TST is empty
     if (root == nullptr) {
-        cout << "root is null" << endl;
         return false;
     }
     if (word.length() == 0) {
@@ -116,10 +113,7 @@ bool DictionaryTrie::find(string word) const {
     }
     TSTNode* node = root;
     char ltr = word.at(0);
-    cout << "first letter: " << ltr << endl;
     while (true) {
-        cout << "printing whole word down the middle" << endl;
-
         TSTNode* tnode = node;
         cout << tnode->getChar() << endl;
         while (tnode->middle != nullptr) {
@@ -128,8 +122,6 @@ bool DictionaryTrie::find(string word) const {
         }
         // left child
         if (ltr < node->getChar()) {
-            cout << "ltr < node->getChar(): " << ltr << "<" << node->getChar()
-                 << endl;
             if (node->left != nullptr) {
                 node = node->left;
             } else {
@@ -138,8 +130,6 @@ bool DictionaryTrie::find(string word) const {
         }
         // right child
         else if (ltr > node->getChar()) {
-            cout << "ltr > node->getChar(): " << ltr << ">" << node->getChar()
-                 << endl;
             if (node->right != nullptr) {
                 node = node->right;
             } else {
@@ -148,14 +138,11 @@ bool DictionaryTrie::find(string word) const {
         }
         // middle child
         else {
-            cout << "ltr = node->getChar(): " << ltr << "=" << node->getChar()
-                 << endl;
             if (pos == word.length() - 1 && node->getFrequency() > 0) {
                 return true;
             } else {
                 if (node->middle != nullptr) {
                     node = node->middle;
-                    cout << "node = node->middle: " << node->getChar() << endl;
                     pos++;
                     if (pos == word.length()) {
                         return false;
@@ -169,11 +156,83 @@ bool DictionaryTrie::find(string word) const {
     }
 }
 
+// creating a struct for comparing pairs
+/*
+struct comPair {
+    bool operator()(const pair<string, int>& lhs,
+                    const pair<string, int>& rhs) {
+        if (lhs.second == rhs.second) {
+            return lhs.first > rhs.first;
+        }
+        return lhs.second > rhs.second;
+    }
+};
+creating a priority queue of (string, int) pairs
+typedef std::priority_queue<pair<string, int>, std::vector<pair<string, int>>,
+                            comPair>
+    my_queue;
+*/
+
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
-    std::vector<string> fvector(numCompletions);
-    return {};
+    if (root == nullptr) {
+        return {};
+    }
+    if (numCompletions == 0) {
+        return {};
+    }
+    TSTNode* node = root;
+    char ltr;
+    vector<string> fvector;
+
+    // traversing through every letter in prefix, should have node = the last
+    // letter of prefix
+    for (int i = 0; i < prefix.length(); i++) {
+        ltr = prefix.at(i);
+        // traversing through each node in that level to find a node with that
+        // letter at that position in the prefix
+        while (true) {
+            // if we find the letter, node becomes the middle node
+            if (ltr == node->getChar()) {
+                // if the middle node exists, otherwise return empty vector
+                if (node->middle != nullptr) {
+                    node = node->middle;
+                    break;
+                } else if (i == prefix.length() - 1) {
+                    if (node->getFrequency() > 0) {
+                        // TODO: create a vector of size 1 with only this prefix
+                        // in it and return unless numCompletions is 0
+                        // return the vector
+                        fvector.push_back(prefix);
+                        return fvector;
+                    }
+                    return fvector;
+                } else {
+                    return fvector;
+                }
+            }
+            // if letter is less than the nodes letter
+            else if (ltr < node->getChar()) {
+                // if the left node exists, otherwise return empty vector
+                if (node->left != nullptr) {
+                    node = node->left;
+                } else {
+                    return fvector;
+                }
+            } else {
+                // if the right node exists, otherwise return empty vector
+                if (node->right != nullptr) {
+                    node = node->right;
+                } else {
+                    return fvector;
+                }
+            }
+        }
+    }
+    // finding the node equal to the last letter of the prefix
+
+    return fvector;
 }
 
 /* TODO */

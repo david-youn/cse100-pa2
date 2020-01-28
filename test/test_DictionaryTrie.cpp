@@ -106,4 +106,62 @@ TEST(DictTrieTests, FIND_TEST4) {
     ASSERT_TRUE(dict.find("b"));
     ASSERT_FALSE(dict.find("a"));
 }
+
+TEST(DictTrieTests, FIND_TEST5) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("cat", 3));
+    ASSERT_TRUE(dict.insert("catalyst", 5));
+    ASSERT_TRUE(dict.insert("catacomb", 15));
+    ASSERT_TRUE(dict.insert("origin", 3));
+    ASSERT_TRUE(dict.insert("original", 5));
+    ASSERT_TRUE(dict.insert("banter", 15));
+    ASSERT_TRUE(dict.insert("ant", 3));
+    ASSERT_TRUE(dict.insert("antsy", 5));
+    ASSERT_TRUE(dict.insert("ogre", 15));
+    ASSERT_TRUE(dict.insert("anger", 3));
+    ASSERT_TRUE(dict.insert("angery", 5));
+    ASSERT_TRUE(dict.insert("angle", 15));
+    ASSERT_TRUE(dict.insert("ang", 3924));
+
+    ASSERT_TRUE(dict.find("cat"));
+    ASSERT_TRUE(dict.find("catalyst"));
+    ASSERT_TRUE(dict.find("catacomb"));
+    ASSERT_TRUE(dict.find("origin"));
+    ASSERT_FALSE(dict.find("orignal"));
+    ASSERT_TRUE(dict.find("banter"));
+    ASSERT_TRUE(dict.find("ant"));
+    ASSERT_TRUE(dict.find("antsy"));
+    ASSERT_TRUE(dict.find("ogre"));
+    ASSERT_TRUE(dict.find("anger"));
+    ASSERT_TRUE(dict.find("angery"));
+    ASSERT_TRUE(dict.find("angle"));
+    ASSERT_TRUE(dict.find("ang"));
+    ASSERT_FALSE(dict.find("bant"));
+}
+
+TEST(DictTrieTests, PREDICT_TEST1) {
+    DictionaryTrie dict;
+    dict.insert("yu", 100);
+    ASSERT_EQ("yu", dict.predictCompletions("yu", 1)[0]);
+    ASSERT_EQ(1, dict.predictCompletions("yu", 2000).size());
+}
+
+TEST(DictTrieTests, PREDICT_TEST2) {
+    DictionaryTrie dict;
+    dict.insert("y0", 100);
+    ASSERT_EQ(dict.predictCompletions("yu", 1).size(), 0);
+}
+
+TEST(DictTrieTests, PREDICT_TEST3) {
+    DictionaryTrie dict;
+    dict.insert("y", 100);
+    ASSERT_EQ("y", dict.predictCompletions("y", 1)[0]);
+}
+
+TEST(DictTrieTests, PREDICT_TEST4) {
+    DictionaryTrie dict;
+    dict.insert("yummy", 100);
+    dict.insert("yorek", 1);
+    ASSERT_EQ("yorek", dict.predictCompletions("yorek", 1)[0]);
+}
 /* TODO */
