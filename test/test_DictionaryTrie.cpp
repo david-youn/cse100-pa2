@@ -75,4 +75,35 @@ TEST(DictTrieTests, FIND_TEST3) {
     ASSERT_TRUE(dict.find("yum"));
     ASSERT_TRUE(dict.find("yummy"));
 }
+
+TEST(DictTrieTests, FIND_TEST4) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("garden", 3));
+    ASSERT_TRUE(dict.insert("garage", 5));
+    ASSERT_TRUE(dict.insert("garbage", 15));
+    ASSERT_TRUE(dict.insert("tiger", 3));
+    ASSERT_TRUE(dict.insert("tie", 5));
+    ASSERT_TRUE(dict.insert("zebra", 15));
+    ASSERT_TRUE(dict.insert("cat", 3));
+    ASSERT_TRUE(dict.insert("car", 5));
+    ASSERT_TRUE(dict.insert("art", 15));
+    ASSERT_TRUE(dict.insert("eat", 3));
+    ASSERT_TRUE(dict.insert("wow", 5));
+    ASSERT_TRUE(dict.insert("b", 15));
+
+    ASSERT_TRUE(dict.find("garden"));
+    ASSERT_TRUE(dict.find("garage"));
+    ASSERT_TRUE(dict.find("garbage"));
+    ASSERT_TRUE(dict.find("tiger"));
+    ASSERT_FALSE(dict.find("tig"));
+    ASSERT_TRUE(dict.find("tie"));
+    ASSERT_TRUE(dict.find("zebra"));
+    ASSERT_TRUE(dict.find("cat"));
+    ASSERT_TRUE(dict.find("car"));
+    ASSERT_TRUE(dict.find("art"));
+    ASSERT_TRUE(dict.find("eat"));
+    ASSERT_TRUE(dict.find("wow"));
+    ASSERT_TRUE(dict.find("b"));
+    ASSERT_FALSE(dict.find("a"));
+}
 /* TODO */
