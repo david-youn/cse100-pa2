@@ -7,6 +7,8 @@
 #include <iostream>
 #include <queue>
 
+using namespace std;
+
 /* TODO */
 DictionaryTrie::DictionaryTrie() { root = nullptr; }
 
@@ -114,12 +116,6 @@ bool DictionaryTrie::find(string word) const {
     TSTNode* node = root;
     char ltr = word.at(0);
     while (true) {
-        TSTNode* tnode = node;
-        cout << tnode->getChar() << endl;
-        while (tnode->middle != nullptr) {
-            tnode = tnode->middle;
-            cout << tnode->getChar() << endl;
-        }
         // left child
         if (ltr < node->getChar()) {
             if (node->left != nullptr) {
@@ -157,21 +153,16 @@ bool DictionaryTrie::find(string word) const {
 }
 
 // creating a struct for comparing pairs
-/*
 struct comPair {
-    bool operator()(const pair<string, int>& lhs,
-                    const pair<string, int>& rhs) {
-        if (lhs.second == rhs.second) {
-            return lhs.first > rhs.first;
+    bool operator()(pair<string, int>* w1, pair<string, int>* w2) {
+        if (w1->second != w2->second) {
+            return w1->second < w2->second;
         }
-        return lhs.second > rhs.second;
+        return w1->first < w2->first;
     }
 };
-creating a priority queue of (string, int) pairs
-typedef std::priority_queue<pair<string, int>, std::vector<pair<string, int>>,
-                            comPair>
-    my_queue;
-*/
+priority_queue<pair<string, int>*, vector<pair<string, int>*>, comPair> pq;
+pair<string, int> pword;
 
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
@@ -185,13 +176,17 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     TSTNode* node = root;
     char ltr;
     vector<string> fvector;
+    // creating a priority queue of (string, int) pairs
+    // priority_queue<pair<string, int>*, vector<pair<string, int>*>, comPair>
+    // pq;
 
-    // traversing through every letter in prefix, should have node = the last
-    // letter of prefix
-    for (int i = 0; i < prefix.length(); i++) {
+    // traversing through every letter in prefix except last, should have node =
+    // the last letter of prefix
+    for (int i = 0; i < prefix.length() - 1; i++) {
         ltr = prefix.at(i);
-        // traversing through each node in that level to find a node with that
-        // letter at that position in the prefix
+
+        // traversing through each node in that level to find a node with
+        // that letter at that position in the prefix
         while (true) {
             // if we find the letter, node becomes the middle node
             if (ltr == node->getChar()) {
@@ -199,15 +194,6 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
                 if (node->middle != nullptr) {
                     node = node->middle;
                     break;
-                } else if (i == prefix.length() - 1) {
-                    if (node->getFrequency() > 0) {
-                        // TODO: create a vector of size 1 with only this prefix
-                        // in it and return unless numCompletions is 0
-                        // return the vector
-                        fvector.push_back(prefix);
-                        return fvector;
-                    }
-                    return fvector;
                 } else {
                     return fvector;
                 }
@@ -230,7 +216,28 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
             }
         }
     }
-    // finding the node equal to the last letter of the prefix
+
+    ltr = prefix.at(prefix.length() - 1);
+    // if prefix itself is a word
+    if (node->getFrequency() > 0 && node->getChar() == ltr) {
+        pword = make_pair(prefix, node->getFrequency());
+        pq.push(&pword);
+    }
+    // currently node points to the last letter of prefix, now need to traverse
+    // all subtrees
+
+    // the string that we will be "building"
+    // ascendingInOrder(node, prefix);
+
+    // for after inserting all words in pq
+    for (int i = 0; i < numCompletions; i++) {
+        if (i >= pq.size()) {
+            break;
+        }
+        pair<string, int>* temp = pq.top();
+        fvector.push_back(temp->first);
+        pq.pop();
+    }
 
     return fvector;
 }
@@ -240,6 +247,25 @@ std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
     return {};
 }
+
+/*
+static void ascendingInOrder(TSTNode* node, string str) {
+    str = str + node->getChar();
+    if (node->getFrequency() > 0) {
+        pword = make_pair(str, node->getFrequency());
+        pq.push(&pword);
+    }
+    if (node->left != nullptr) {
+        ascendingInOrder(node->left, str);
+    }
+    if (node->middle != nullptr) {
+        ascendingInOrder(node->middle, str);
+    }
+    if (node->right != nullptr) {
+        ascendingInOrder(node->right, str);
+    }
+}
+*/
 
 /* TODO */
 DictionaryTrie::~DictionaryTrie() {}

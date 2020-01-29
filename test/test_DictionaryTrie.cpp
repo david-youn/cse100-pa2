@@ -164,4 +164,5 @@ TEST(DictTrieTests, PREDICT_TEST4) {
     dict.insert("yorek", 1);
     ASSERT_EQ("yorek", dict.predictCompletions("yorek", 1)[0]);
 }
+
 /* TODO */
