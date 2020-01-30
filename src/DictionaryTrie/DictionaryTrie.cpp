@@ -158,7 +158,7 @@ struct comPair {
         if (w1->second != w2->second) {
             return w1->second < w2->second;
         }
-        return w1->first < w2->first;
+        return w1->first > w2->first;
     }
 };
 priority_queue<pair<string, int>*, vector<pair<string, int>*>, comPair> pq;
@@ -167,9 +167,10 @@ pair<string, int> pword;
 static void ascendingInOrder(TSTNode* node, string str) {
     // base case:
     if (node->getFrequency() > 0) {
-        pword = make_pair(str + node->getChar(), node->getFrequency());
-        pq.push(&pword);
-        cout << pword.first << ": " << pword.second << endl;
+        pair<string, int>* pword =
+            new pair<string, int>(str + node->getChar(), node->getFrequency());
+        pq.push(pword);
+        cout << pword->first << ": " << pword->second << endl;
         if (node->left == nullptr && node->right == nullptr &&
             node->middle == nullptr) {
             str = str + node->getChar();
@@ -238,20 +239,23 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         }
     }
 
-    /*
-        ltr = prefix.at(prefix.length() - 1);
-        // if prefix itself is a word
-        if (node->getFrequency() > 0 && node->getChar() == ltr) {
-            pword = make_pair(prefix, node->getFrequency());
-            pq.push(&pword);
-        }
-    */
+    ltr = prefix.at(prefix.length() - 1);
+    // if prefix itself is a word
+    if (node->getFrequency() > 0 && node->getChar() == ltr) {
+        pair<string, int>* pword =
+            new pair<string, int>(prefix, node->getFrequency());
+        pq.push(pword);
+    }
+
     // currently node points to the last letter of prefix, now need to traverse
     // all subtrees
 
     // the string that we will be "building" by going through the subtree
-    prefix.pop_back();
-    ascendingInOrder(node, prefix);
+    // prefix.pop_back();
+
+    if (node->middle != nullptr) {
+        ascendingInOrder(node->middle, prefix);
+    }
     // ascendingInOrder(root, "");
 
     // for after inserting all words in pq
