@@ -192,19 +192,17 @@ static void ascendingInOrder(TSTNode* node, string str) {
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
-    if (root == nullptr) {
+    if (root == nullptr || numCompletions == 0 || prefix.length() == 0) {
         return {};
     }
-    if (numCompletions == 0) {
-        return {};
-    }
+
     TSTNode* node = root;
     char ltr;
     vector<string> fvector;
 
     // traversing through every letter in prefix except last, should have node =
     // the last letter of prefix
-    for (int i = 0; i < prefix.length() - 1; i++) {
+    for (int i = 0; i < prefix.length(); i++) {
         ltr = prefix.at(i);
 
         // traversing through each node in that level to find a node with
@@ -212,6 +210,9 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         while (true) {
             // if we find the letter, node becomes the middle node
             if (ltr == node->getChar()) {
+                if (i == prefix.length() - 1) {
+                    break;
+                }
                 // if the middle node exists, otherwise return empty vector
                 if (node->middle != nullptr) {
                     node = node->middle;
