@@ -170,7 +170,6 @@ static void ascendingInOrder(TSTNode* node, string str) {
         pair<string, int>* pword =
             new pair<string, int>(str + node->getChar(), node->getFrequency());
         pq.push(pword);
-        cout << pword->first << ": " << pword->second << endl;
         if (node->left == nullptr && node->right == nullptr &&
             node->middle == nullptr) {
             str = str + node->getChar();
@@ -195,10 +194,9 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     if (root == nullptr || numCompletions == 0 || prefix.length() == 0) {
         return {};
     }
-
+    vector<string> fvector;
     TSTNode* node = root;
     char ltr;
-    vector<string> fvector;
 
     // traversing through every letter in prefix except last, should have node =
     // the last letter of prefix
@@ -241,8 +239,6 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     }
 
     ltr = prefix.at(prefix.length() - 1);
-    cout << "ltr: " << ltr << endl;
-    cout << "node->char: " << node->getChar() << endl;
     if (node->getChar() != ltr) {
         return fvector;
     }
@@ -259,7 +255,6 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         ascendingInOrder(node->middle, prefix);
     }
 
-    cout << "pq size: " << pq.size() << endl;
     // for after inserting all words in pq
     for (int i = 0; i < numCompletions; i++) {
         if (pq.size() == 0) {
@@ -267,11 +262,12 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         }
         pair<string, int>* temp = pq.top();
         fvector.push_back(temp->first);
+        delete (pq.top());
         pq.pop();
     }
-    cout << "vectortime" << endl;
-    for (int i = 0; i < fvector.size(); i++) {
-        cout << fvector.at(i) << endl;
+    while (pq.size() != 0) {
+        delete (pq.top());
+        pq.pop();
     }
     return fvector;
 }
@@ -282,5 +278,29 @@ std::vector<string> DictionaryTrie::predictUnderscores(
     return {};
 }
 
+static void deleteHelper(TSTNode* node) {
+    if (node == nullptr) {
+        return;
+    }
+    if (node->left != nullptr) {
+        deleteHelper(node->left);
+    }
+    if (node->middle != nullptr) {
+        deleteHelper(node->middle);
+    }
+    if (node->right != nullptr) {
+        deleteHelper(node->right);
+    }
+    delete (node);
+    node = nullptr;
+}
+
 /* TODO */
-DictionaryTrie::~DictionaryTrie() {}
+DictionaryTrie::~DictionaryTrie() {
+    deleteHelper(root);
+    root = nullptr;
+    while (pq.size() != 0) {
+        delete (pq.top());
+        pq.pop();
+    }
+}
