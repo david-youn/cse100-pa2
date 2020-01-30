@@ -240,8 +240,13 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     }
 
     ltr = prefix.at(prefix.length() - 1);
+    cout << "ltr: " << ltr << endl;
+    cout << "node->char: " << node->getChar() << endl;
+    if (node->getChar() != ltr) {
+        return fvector;
+    }
     // if prefix itself is a word
-    if (node->getFrequency() > 0 && node->getChar() == ltr) {
+    if (node->getFrequency() > 0) {
         pair<string, int>* pword =
             new pair<string, int>(prefix, node->getFrequency());
         pq.push(pword);
@@ -249,25 +254,20 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
 
     // currently node points to the last letter of prefix, now need to traverse
     // all subtrees
-
-    // the string that we will be "building" by going through the subtree
-    // prefix.pop_back();
-
     if (node->middle != nullptr) {
         ascendingInOrder(node->middle, prefix);
     }
-    // ascendingInOrder(root, "");
 
+    cout << "pq size: " << pq.size() << endl;
     // for after inserting all words in pq
     for (int i = 0; i < numCompletions; i++) {
-        if (i >= pq.size()) {
+        if (pq.size() == 0) {
             break;
         }
         pair<string, int>* temp = pq.top();
         fvector.push_back(temp->first);
         pq.pop();
     }
-
     cout << "vectortime" << endl;
     for (int i = 0; i < fvector.size(); i++) {
         cout << fvector.at(i) << endl;

@@ -139,7 +139,7 @@ TEST(DictTrieTests, FIND_TEST5) {
     ASSERT_FALSE(dict.find("bant"));
 }
 
-TEST(DictTrieTests, DictTrieTests_PREDICT_TEST4_Test) {
+TEST(DictTrieTests, P_TEST5) {
     DictionaryTrie dict;
     ASSERT_TRUE(dict.insert("cat", 3));
     ASSERT_TRUE(dict.insert("catalyst", 5));
