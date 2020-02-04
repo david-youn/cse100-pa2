@@ -204,8 +204,8 @@ TEST(DictTrieTests, UNDERSCORE_TEST1) {
     ASSERT_TRUE(dict.insert("ang", 3924));
 
     ASSERT_EQ(3, dict.predictUnderscores("ca_", 10).size());
-    ASSERT_EQ(2, dict.predictCompletions("__t", 2).size());
-    ASSERT_EQ(2, dict.predictCompletions("cata____", 5).size());
+    ASSERT_EQ(2, dict.predictUnderscores("__t", 2).size());
+    ASSERT_EQ(2, dict.predictUnderscores("cata____", 5).size());
 }
 
 /* TODO */
