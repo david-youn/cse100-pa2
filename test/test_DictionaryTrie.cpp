@@ -206,6 +206,21 @@ TEST(DictTrieTests, UNDERSCORE_TEST1) {
     ASSERT_EQ(3, dict.predictUnderscores("ca_", 10).size());
     ASSERT_EQ(2, dict.predictUnderscores("__t", 2).size());
     ASSERT_EQ(2, dict.predictUnderscores("cata____", 5).size());
+    ASSERT_EQ(5, dict.predictUnderscores("___", 100).size());
+}
+
+TEST(DictTrieTests, UNDERSCORE_TEST2) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("cat", 3));
+    ASSERT_TRUE(dict.insert("car", 3));
+    ASSERT_TRUE(dict.insert("gin", 5));
+    ASSERT_TRUE(dict.insert("god", 15));
+    ASSERT_TRUE(dict.insert("gov", 3));
+    ASSERT_TRUE(dict.insert("git", 3));
+    ASSERT_TRUE(dict.insert("got", 5));
+    ASSERT_TRUE(dict.insert("gut", 15));
+
+    ASSERT_EQ(4, dict.predictUnderscores("__t", 10).size());
 }
 
 /* TODO */

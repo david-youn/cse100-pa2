@@ -288,14 +288,14 @@ static void underscoreHelper(TSTNode* node, string finding, string str,
     char curr = finding.at(pos);
 
     // go down all branches at that level
-    if (curr == '_') {
-        if (node->left != nullptr) {
-            underscoreHelper(node->left, finding, str, pos);
-        }
-        if (node->right != nullptr) {
-            underscoreHelper(node->right, finding, str, pos);
-        }
+    // if (curr == '_') {
+    if (node->left != nullptr) {
+        underscoreHelper(node->left, finding, str, pos);
     }
+    if (node->right != nullptr) {
+        underscoreHelper(node->right, finding, str, pos);
+    }
+    //}
     if (node->getChar() == curr || curr == '_') {
         str = str + node->getChar();
         pos++;
