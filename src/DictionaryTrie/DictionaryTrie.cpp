@@ -295,7 +295,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         pq.pop();
     }
 
-    // emptying the rest of the priority queue
+    // emptying the rest of the priority queues
     while (pq.size() != 0) {
         delete (pq.top());
         pq.pop();
