@@ -165,6 +165,7 @@ priority_queue<pair<string, int>*, vector<pair<string, int>*>, comPair> pq;
 pair<string, int> pword;
 
 static void ascendingInOrder(TSTNode* node, string str) {
+    // referenced algorithm from Stepik textbook
     // base case:
     if (node->getFrequency() > 0) {
         pair<string, int>* pword =
@@ -265,6 +266,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         delete (pq.top());
         pq.pop();
     }
+    // emptying the rest of the priority queue
     while (pq.size() != 0) {
         delete (pq.top());
         pq.pop();
@@ -272,10 +274,105 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     return fvector;
 }
 
+static void underscoreHelper(TSTNode* node, string finding, string str,
+                             int pos) {
+    cout << "Pos: " << pos << endl;
+
+    if (pos > finding.length()) {
+        return;
+    }
+    if (pos < finding.length()) {
+        cout << "looking for: " << finding.at(pos) << endl;
+    }
+    cout << "node->getChar(): " << node->getChar() << endl;
+    cout << "str: " << str << endl;
+
+    // the letter at the position we need
+    char curr = finding.at(pos);
+
+    // if we find it in the branch
+    if (node->getChar() == curr) {
+        // when at the length of the string
+        if (pos == finding.length() - 1) {
+            cout << "got em" << endl;
+            cout << "node->getFrequency() at node->getChar(): "
+                 << node->getChar() << ": " << node->getFrequency() << endl;
+            // if we found a word that fits the underscores
+            if (node->getFrequency() > 0) {
+                cout << "found one" << endl;
+
+                pair<string, int>* pword = new pair<string, int>(
+                    str + node->getChar(), node->getFrequency());
+                pq.push(pword);
+            }
+            return;
+        } else if (node->middle != nullptr) {
+            pos++;
+            str = str + node->getChar();
+            cout << "going mid" << endl;
+            underscoreHelper(node->middle, finding, str, pos);
+        }
+    } else if (curr == '_') {
+        if (pos == finding.length() - 1) {
+            cout << "got em" << endl;
+            cout << "node->getFrequency() at node->getChar(): "
+                 << node->getChar() << ": " << node->getFrequency() << endl;
+            // if we found a word that fits the underscores
+            if (node->getFrequency() > 0) {
+                cout << "found one" << endl;
+
+                pair<string, int>* pword = new pair<string, int>(
+                    str + node->getChar(), node->getFrequency());
+                pq.push(pword);
+            }
+        } else if (node->middle != nullptr) {
+            pos++;
+            str = str + node->getChar();
+            cout << "going mid" << endl;
+            underscoreHelper(node->middle, finding, str, pos);
+        }
+        if (node->left != nullptr) {
+            str = str + node->getChar();
+            cout << "going left" << endl;
+            underscoreHelper(node->left, finding, str, pos);
+        }
+        if (node->right != nullptr) {
+            str = str + node->getChar();
+            cout << "going right" << endl;
+            underscoreHelper(node->right, finding, str, pos);
+        }
+    } else {
+        return;
+    }
+}
+
 /* TODO */
 std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
-    return {};
+    // emptying the priority queue before adding words to pq
+    while (pq.size() != 0) {
+        delete (pq.top());
+        pq.pop();
+    }
+    cout << "good to go" << endl;
+    vector<string> uvector;
+    underscoreHelper(root, pattern, "", 0);
+    // for after inserting all words in pq
+    for (int i = 0; i < numCompletions; i++) {
+        if (pq.size() == 0) {
+            break;
+        }
+        pair<string, int>* temp = pq.top();
+        uvector.push_back(temp->first);
+        delete (pq.top());
+        pq.pop();
+    }
+    // emptying the rest of the priority queue
+    while (pq.size() != 0) {
+        delete (pq.top());
+        pq.pop();
+    }
+    return uvector;
 }
 
 static void deleteHelper(TSTNode* node) {

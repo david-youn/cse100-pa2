@@ -185,4 +185,27 @@ TEST(DictTrieTests, PREDICT_TEST5) {
     ASSERT_EQ(4, dict.predictCompletions("ang", 54).size());
 }
 
+TEST(DictTrieTests, UNDERSCORE_TEST1) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("cat", 3));
+    ASSERT_TRUE(dict.insert("cab", 3));
+    ASSERT_TRUE(dict.insert("car", 3));
+    ASSERT_TRUE(dict.insert("catalyst", 5));
+    ASSERT_TRUE(dict.insert("catacomb", 15));
+    ASSERT_TRUE(dict.insert("origin", 3));
+    ASSERT_TRUE(dict.insert("original", 5));
+    ASSERT_TRUE(dict.insert("banter", 15));
+    ASSERT_TRUE(dict.insert("ant", 3));
+    ASSERT_TRUE(dict.insert("antsy", 5));
+    ASSERT_TRUE(dict.insert("ogre", 15));
+    ASSERT_TRUE(dict.insert("anger", 3));
+    ASSERT_TRUE(dict.insert("angery", 5));
+    ASSERT_TRUE(dict.insert("angle", 15));
+    ASSERT_TRUE(dict.insert("ang", 3924));
+
+    ASSERT_EQ(3, dict.predictUnderscores("ca_", 10).size());
+    ASSERT_EQ(2, dict.predictCompletions("__t", 2).size());
+    ASSERT_EQ(2, dict.predictCompletions("cata____", 5).size());
+}
+
 /* TODO */
