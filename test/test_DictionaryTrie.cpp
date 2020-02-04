@@ -223,4 +223,29 @@ TEST(DictTrieTests, UNDERSCORE_TEST2) {
     ASSERT_EQ(4, dict.predictUnderscores("__t", 10).size());
 }
 
+TEST(DictTrieTests, UNDERSCORE_TEST3) {
+    DictionaryTrie dict;
+    ASSERT_TRUE(dict.insert("apple", 3));
+    ASSERT_TRUE(dict.insert("bow", 3));
+    ASSERT_TRUE(dict.insert("cow", 3));
+    ASSERT_TRUE(dict.insert("doorknob", 3));
+    ASSERT_TRUE(dict.insert("elephant", 3));
+    ASSERT_TRUE(dict.insert("foghorn", 3));
+    ASSERT_TRUE(dict.insert("gaslamp", 3));
+    ASSERT_TRUE(dict.insert("hello there", 3));
+    ASSERT_TRUE(dict.insert("bedtime", 5));
+    ASSERT_TRUE(dict.insert("backhoe", 5));
+    ASSERT_TRUE(dict.insert("barware", 1));
+    ASSERT_TRUE(dict.insert("bedsore", 30));
+    ASSERT_TRUE(dict.insert("beelike", 200));
+    ASSERT_TRUE(dict.insert("bonk", 5));
+    ASSERT_TRUE(dict.insert("boreee", 15));
+
+    ASSERT_EQ(5, dict.predictUnderscores("b_____e", 10).size());
+    auto result = dict.predictUnderscores("b_____e", 10);
+    for (int i = 0; i < result.size(); i++) {
+        cout << result.at(i) << endl;
+    }
+}
+
 /* TODO */

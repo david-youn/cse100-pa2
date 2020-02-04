@@ -161,16 +161,39 @@ struct comPair {
         return w1->first > w2->first;
     }
 };
+struct rcomPair {
+    bool operator()(pair<string, int>* w1, pair<string, int>* w2) {
+        if (w1->second != w2->second) {
+            return w1->second > w2->second;
+        }
+        return w1->first < w2->first;
+    }
+};
+
 priority_queue<pair<string, int>*, vector<pair<string, int>*>, comPair> pq;
+priority_queue<pair<string, int>*, vector<pair<string, int>*>, rcomPair> rpq;
+
 pair<string, int> pword;
 
-static void ascendingInOrder(TSTNode* node, string str) {
+static void ascendingInOrder(TSTNode* node, string str,
+                             unsigned int numCompletions, int minFreq) {
     // referenced algorithm from Stepik textbook
     // base case:
-    if (node->getFrequency() > 0) {
-        pair<string, int>* pword =
-            new pair<string, int>(str + node->getChar(), node->getFrequency());
-        pq.push(pword);
+    int freq = node->getFrequency();
+    if (freq > 0) {
+        if (numCompletions > rpq.size()) {
+            pair<string, int>* pword =
+                new pair<string, int>(str + node->getChar(), freq);
+            rpq.push(pword);
+            if (freq < minFreq) {
+                minFreq = freq;
+            }
+        } else if (freq > minFreq) {
+            pair<string, int>* pword =
+                new pair<string, int>(str + node->getChar(), freq);
+            rpq.pop();
+            rpq.push(pword);
+        }
         if (node->left == nullptr && node->right == nullptr &&
             node->middle == nullptr) {
             str = str + node->getChar();
@@ -178,20 +201,21 @@ static void ascendingInOrder(TSTNode* node, string str) {
         }
     }
     if (node->left != nullptr) {
-        ascendingInOrder(node->left, str);
+        ascendingInOrder(node->left, str, numCompletions, minFreq);
     }
     if (node->right != nullptr) {
-        ascendingInOrder(node->right, str);
+        ascendingInOrder(node->right, str, numCompletions, minFreq);
     }
     if (node->middle != nullptr) {
         str = str + node->getChar();
-        ascendingInOrder(node->middle, str);
+        ascendingInOrder(node->middle, str, numCompletions, minFreq);
     }
 }
 
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
+    int minFreq = 0;
     if (root == nullptr || numCompletions == 0 || prefix.length() == 0) {
         return {};
     }
@@ -248,15 +272,19 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         pair<string, int>* pword =
             new pair<string, int>(prefix, node->getFrequency());
         pq.push(pword);
+        minFreq = node->getFrequency();
     }
 
     // currently node points to the last letter of prefix, now need to traverse
     // all subtrees
     if (node->middle != nullptr) {
-        ascendingInOrder(node->middle, prefix);
+        ascendingInOrder(node->middle, prefix, numCompletions, minFreq);
     }
 
-    // for after inserting all words in pq
+    while (rpq.size() != 0) {
+        pq.push(rpq.top());
+        rpq.pop();
+    }
     for (int i = 0; i < numCompletions; i++) {
         if (pq.size() == 0) {
             break;
@@ -266,23 +294,24 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         delete (pq.top());
         pq.pop();
     }
+
     // emptying the rest of the priority queue
     while (pq.size() != 0) {
         delete (pq.top());
         pq.pop();
+    }
+    while (rpq.size() != 0) {
+        delete (rpq.top());
+        rpq.pop();
     }
     return fvector;
 }
 
 static void underscoreHelper(TSTNode* node, string finding, string str,
                              int pos) {
-    cout << "Pos: " << pos << endl;
     if (pos >= finding.length()) {
         return;
     }
-    cout << "looking for: " << finding.at(pos) << endl;
-    cout << "node->getChar(): " << node->getChar() << endl;
-    cout << "str: " << str << endl;
 
     // the letter at the position we need
     char curr = finding.at(pos);
@@ -310,7 +339,6 @@ static void underscoreHelper(TSTNode* node, string finding, string str,
             underscoreHelper(node->middle, finding, str, pos);
         }
     }
-    cout << "done" << endl;
     return;
 }
 
@@ -339,7 +367,6 @@ std::vector<string> DictionaryTrie::predictUnderscores(
         delete (pq.top());
         pq.pop();
     }
-    cout << "the end" << endl;
     return uvector;
 }
 
