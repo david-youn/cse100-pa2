@@ -188,11 +188,11 @@ static void ascendingInOrder(TSTNode* node, string str,
             if (freq < minFreq) {
                 minFreq = freq;
             }
-        } else if (freq > minFreq) {
+        } else if (freq >= minFreq) {
             pair<string, int>* pword =
                 new pair<string, int>(str + node->getChar(), freq);
-            rpq.pop();
             rpq.push(pword);
+            rpq.pop();
         }
         if (node->left == nullptr && node->right == nullptr &&
             node->middle == nullptr) {
